@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI İnşaat Təhlükəsizlik Monitorinqi | HSE Vision</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <!-- Top Navbar -->
+    <header class="navbar">
+        <div class="nav-left">
+            <div class="logo-badge">
+                <span class="icon">⛑️</span>
+                <span class="logo-title">HSE CAM VISION</span>
+            </div>
+            <div class="system-status">
+                <span class="pulse-dot"></span>
+                <span id="systemStatusText">CANLI ANALİZ AKTİVDİR</span>
+            </div>
+        </div>
+        <div class="nav-center">
+            <span class="area-tag">📍 İnşaat Sahəsi #1</span>
+            <span class="divider">|</span>
+            <span id="activeSourceDisplay" class="source-tag">Mənbə: viii.mp4</span>
+        </div>
+        <div class="nav-right">
+            <span id="clock" class="digital-clock">00:00:00</span>
+            <button id="soundToggleBtn" class="btn-sound active" title="Səsli siqnalı aç/bağla">
+                <span id="soundIcon">🔊</span> Səsli Alarm
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Dashboard Container -->
+    <main class="dashboard-grid">
+        
+        <!-- LEFT COLUMN: Input Controls -->
+        <aside class="sidebar-left card">
+            <div class="card-header">
+                <h3>⚙️ Görüntü Mənbəyi</h3>
+            </div>
+
+            <!-- Tab Buttons -->
+            <div class="tab-buttons">
+                <button class="tab-btn active" onclick="switchTab('fileTab')">📁 Video Faylı</button>
+                <button class="tab-btn" onclick="switchTab('cameraTab')">📹 Canlı Kamera</button>
+            </div>
+
+            <!-- Tab 1: Video File & Upload -->
+            <div id="fileTab" class="tab-content active">
+                <div class="upload-box" id="dropArea">
+                    <input type="file" id="videoFileInput" accept="video/*" style="display:none">
+                    <div class="upload-icon">📤</div>
+                    <p class="upload-text"><strong>Video yükləmək üçün klikləyin</strong> və ya bura atın</p>
+                    <span class="upload-hint">MP4, AVI, MOV (İstənilən inşaat videosu)</span>
+                    <button class="btn btn-primary" onclick="document.getElementById('videoFileInput').click()">Fayl Seç</button>
+                </div>
+                <div id="uploadProgress" class="progress-bar-container" style="display:none;">
+                    <div class="progress-bar-fill" id="progressFill"></div>
+                    <span id="progressText">Yüklənir...</span>
+                </div>
+
+                <div class="form-group mt-3">
+                    <label>Mövcud Videolar:</label>
+                    <select id="videoSelect" class="form-select" onchange="changeSelectedVideo()">
+                        <option value="viii.mp4">viii.mp4 (Hazır Video)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Tab 2: RTSP / Webcam -->
+            <div id="cameraTab" class="tab-content">
+                <p class="section-desc">Gələcəkdə ərazidə quraşdırılmış IP Kameraların RTSP axınını və ya Vebcam-ı bura daxil edin:</p>
+                <div class="form-group">
+                    <label>RTSP / Kamera Ünvanı:</label>
+                    <input type="text" id="rtspInput" class="form-input" placeholder="rtsp://admin:pass@ip:port/stream və ya 0">
+                </div>
+                <div class="quick-examples">
+                    <span>Nümunə:</span>
+                    <a href="javascript:void(0)" onclick="setQuickRtsp('0')">Kompüter Vebkamı (0)</a>
+                </div>
+                <button class="btn btn-danger mt-2 w-100" onclick="connectCamera()">
+                    📹 Kameranı Qoş
+                </button>
+            </div>
+
+            <!-- Detection Settings -->
+            <div class="settings-section mt-4">
+                <h4>🎯 Aşkarlama Tənzimləmələri</h4>
+                <div class="slider-group">
+                    <div class="slider-label">
+                        <span>Həssaslıq (Confidence):</span>
+                        <span id="confVal">35%</span>
+                    </div>
+                    <input type="range" id="confSlider" min="15" max="85" value="35" class="slider" oninput="updateConfidence(this.value)">
+                </div>
+                <div class="info-badges mt-3">
+                    <span class="badge badge-green">✓ Kaska Var</span>
+                    <span class="badge badge-red">⚠ Kaska Yoxdur!</span>
+                    <span class="badge badge-yellow">🦺 Təhlükəsizlik Jileti</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- CENTER: Video Monitor & Real-Time KPIs -->
+        <section class="main-monitor">
+            
+            <!-- Real-time KPI Metric Cards -->
+            <div class="kpi-grid">
+                <div class="kpi-card kpi-total">
+                    <span class="kpi-label">CƏMİ İŞÇİ</span>
+                    <span class="kpi-value" id="kpiTotal">0</span>
+                    <span class="kpi-sub">Kadrda aşkarlandı</span>
+                </div>
+                <div class="kpi-card kpi-safe">
+                    <span class="kpi-label">KASKALI (TƏHLÜKƏSİZ)</span>
+                    <span class="kpi-value" id="kpiSafe">0</span>
+                    <span class="kpi-sub text-green">✓ Qaydaya uyğun</span>
+                </div>
+                <div class="kpi-card kpi-danger" id="kpiDangerCard">
+                    <span class="kpi-label">KASKASIZ (POZUNTU)</span>
+                    <span class="kpi-value" id="kpiDanger">0</span>
+                    <span class="kpi-sub text-red">🚨 DƏRHAL MÜDAXİLƏ!</span>
+                </div>
+                <div class="kpi-card kpi-vest">
+                    <span class="kpi-label">JİLETLİ</span>
+                    <span class="kpi-value" id="kpiVest">0</span>
+                    <span class="kpi-sub text-yellow">Reflektorlu</span>
+                </div>
+            </div>
+
+            <!-- Video Player Screen -->
+            <div class="video-container card">
+                <div class="video-header">
+                    <div class="live-indicator">
+                        <span class="red-record-dot"></span>
+                        <span>CANLI AI EMAL</span>
+                    </div>
+                    <div class="video-stats">
+                        <span id="fpsDisplay">FPS: 0.0</span>
+                    </div>
+                </div>
+
+                <div class="stream-wrapper">
+                    <img id="videoStream" src="/video_feed" alt="Canlı Kamera Axını" onerror="handleStreamError()">
+                    <div id="dangerBanner" class="danger-banner" style="display:none;">
+                        ⚠ DİQQƏT: KASKASIZ ŞƏXS AŞKARLANDI!
+                    </div>
+                </div>
+
+                <div class="video-controls">
+                    <button class="btn btn-outline" onclick="reloadStream()">🔄 Yenilə</button>
+                    <button class="btn btn-outline" onclick="toggleFullScreen()">⛶ Tam Ekran</button>
+                    <span class="hint-text">Model hər kadrı real-vaxtda təhlil edir və pozuntuları qeydə alır.</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- RIGHT COLUMN: Violations Feed / Snapshots -->
+        <aside class="sidebar-right card">
+            <div class="card-header space-between">
+                <h3>🚨 Qaydapozuntusu Xəbərdarlıqları</h3>
+                <button class="btn-clear" onclick="clearViolations()" title="Tarixçəni təmizlə">Təmizlə</button>
+            </div>
+            <p class="incident-subtitle">Kaskasız şəxs aşkar edildikdə avtomatik çəkilən snapshot-lar:</p>
+
+            <div class="violations-feed" id="violationsFeed">
+                <div class="empty-feed">Hələlik heç bir pozuntu qeydə alınmayıb.</div>
+            </div>
+        </aside>
+
+    </main>
+
+    <!-- Modal for Previewing Snapshot -->
+    <div id="imageModal" class="modal" onclick="closeModal()">
+        <span class="modal-close">&times;</span>
+        <img class="modal-content" id="modalImg">
+        <div id="modalCaption" class="modal-caption"></div>
+    </div>
+
+    <!-- Hidden Audio Alert -->
+    <audio id="alertAudio" preload="auto">
+        <source src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" type="audio/mpeg">
+    </audio>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
