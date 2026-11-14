@@ -575,81 +575,125 @@ html, body {
     gap: 10px;
 }
 
-/* KPI Banner: 4 Cards in 1 Row */
+/* KPI Banner: 4 Cards in 1 Row (Zero Clutter & Non-overlapping) */
 .kpi-banner {
-    height: 70px;
-    flex: 0 0 70px;
+    height: 74px;
+    flex: 0 0 74px;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 10px;
+    width: 100%;
 }
 
-.kpi-box {
-    background: var(--bg-card);
+.kpi-card-clean {
+    background: #ffffff;
     border: 1px solid var(--border-light);
     border-radius: 10px;
     padding: 8px 12px;
     display: flex;
-    align-items: center;
-    gap: 10px;
-    position: relative;
+    flex-direction: column;
+    justify-content: space-between;
     box-shadow: var(--shadow-sm);
     transition: all 0.2s ease;
+    min-width: 0;
+    position: relative;
 }
 
-.kpi-icon-wrap {
-    font-size: 1.4rem;
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
-    background: #f8fafc;
+.kpi-card-clean:hover {
+    border-color: var(--border-hover);
+    box-shadow: var(--shadow-md);
+}
+
+.kpi-card-header {
     display: flex;
     align-items: center;
-    justify-content: center;
-    flex: 0 0 36px;
+    justify-content: space-between;
+    gap: 6px;
+    width: 100%;
 }
 
-.kpi-content {
-    display: flex;
-    flex-direction: column;
-}
-
-.kpi-name {
-    font-size: 0.68rem;
+.kpi-title-text {
+    font-size: 0.74rem;
     font-weight: 700;
-    letter-spacing: 0.3px;
     color: var(--text-muted);
+    letter-spacing: 0.2px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.kpi-number {
-    font-size: 1.35rem;
+.kpi-emoji {
+    font-size: 0.95rem;
+    line-height: 1;
+}
+
+.kpi-pill {
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: #f1f5f9;
+    color: #64748b;
+    white-space: nowrap;
+    line-height: 1.2;
+}
+
+.kpi-pill.pill-green {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.kpi-pill.pill-red {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.kpi-pill.pill-amber {
+    background: #fef3c7;
+    color: #b45309;
+}
+
+.kpi-card-body {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+}
+
+.kpi-big-num {
+    font-size: 1.45rem;
     font-weight: 800;
-    line-height: 1.1;
+    line-height: 1;
     color: #0f172a;
     font-family: var(--font-mono);
 }
 
-.kpi-status-tag {
-    position: absolute;
-    top: 6px;
-    right: 8px;
-    font-size: 0.62rem;
-    font-weight: 700;
-    color: var(--text-light);
-    text-transform: uppercase;
+/* Specific Accent Borders */
+.kpi-safe-border {
+    border-bottom: 3px solid #22c55e;
+}
+
+.kpi-danger-border {
+    border-bottom: 3px solid #ef4444;
+}
+
+.kpi-vest-border {
+    border-bottom: 3px solid #f59e0b;
+}
+
+.text-danger-dark {
+    color: #991b1b !important;
 }
 
 .text-safe { color: #16a34a !important; }
 .text-danger { color: #dc2626 !important; }
 .text-vest { color: #d97706 !important; }
 
-.tag-safe { color: #16a34a !important; }
-.tag-danger { color: #dc2626 !important; }
-.tag-vest { color: #d97706 !important; }
-
 /* Danger Alert Pulsing Card */
-.kpi-box.box-danger.danger-active {
-    background: #fef2f2;
+.kpi-card-clean.danger-active {
+    background: #fff5f5;
     border-color: #ef4444;
     box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
     animation: danger-pulse 1.2s infinite;

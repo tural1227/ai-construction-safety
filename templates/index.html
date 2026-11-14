@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/static/style.css?v=2">
+    <link rel="stylesheet" href="/static/style.css?v=3">
 </head>
 <body class="light-theme">
 
@@ -134,40 +134,44 @@
             
             <!-- Real-Time Metric Cards -->
             <div class="kpi-banner">
-                <div class="kpi-box box-total">
-                    <div class="kpi-icon-wrap">👥</div>
-                    <div class="kpi-content">
-                        <span class="kpi-name">CƏMİ İŞÇİ</span>
-                        <span class="kpi-number" id="kpiTotal">0</span>
+                <div class="kpi-card-clean">
+                    <div class="kpi-card-header">
+                        <span class="kpi-title-text"><span class="kpi-emoji">👥</span> Cəmi İşçi</span>
+                        <span class="kpi-pill">Kadrda</span>
                     </div>
-                    <span class="kpi-status-tag">Kadrda</span>
+                    <div class="kpi-card-body">
+                        <span class="kpi-big-num" id="kpiTotal">0</span>
+                    </div>
                 </div>
 
-                <div class="kpi-box box-safe">
-                    <div class="kpi-icon-wrap">⛑️</div>
-                    <div class="kpi-content">
-                        <span class="kpi-name">KASKALI İŞÇİ</span>
-                        <span class="kpi-number text-safe" id="kpiSafe">0</span>
+                <div class="kpi-card-clean kpi-safe-border">
+                    <div class="kpi-card-header">
+                        <span class="kpi-title-text"><span class="kpi-emoji">⛑️</span> Kaskalı</span>
+                        <span class="kpi-pill pill-green">Qaydada</span>
                     </div>
-                    <span class="kpi-status-tag tag-safe">Qaydaya Uyğun</span>
+                    <div class="kpi-card-body">
+                        <span class="kpi-big-num text-safe" id="kpiSafe">0</span>
+                    </div>
                 </div>
 
-                <div class="kpi-box box-danger" id="kpiDangerCard">
-                    <div class="kpi-icon-wrap alert-pulse">🚨</div>
-                    <div class="kpi-content">
-                        <span class="kpi-name">KASKASIZ (TƏHLÜKƏ)</span>
-                        <span class="kpi-number text-danger" id="kpiDanger">0</span>
+                <div class="kpi-card-clean kpi-danger-border" id="kpiDangerCard">
+                    <div class="kpi-card-header">
+                        <span class="kpi-title-text text-danger-dark"><span class="kpi-emoji">🚨</span> Kaskasız</span>
+                        <span class="kpi-pill pill-red">POZUNTU</span>
                     </div>
-                    <span class="kpi-status-tag tag-danger">POZUNTU!</span>
+                    <div class="kpi-card-body">
+                        <span class="kpi-big-num text-danger" id="kpiDanger">0</span>
+                    </div>
                 </div>
 
-                <div class="kpi-box box-vest">
-                    <div class="kpi-icon-wrap">🦺</div>
-                    <div class="kpi-content">
-                        <span class="kpi-name">JİLETLİ İŞÇİ</span>
-                        <span class="kpi-number text-vest" id="kpiVest">0</span>
+                <div class="kpi-card-clean kpi-vest-border">
+                    <div class="kpi-card-header">
+                        <span class="kpi-title-text"><span class="kpi-emoji">🦺</span> Jiletli</span>
+                        <span class="kpi-pill pill-amber">Reflektor</span>
                     </div>
-                    <span class="kpi-status-tag tag-vest">Reflektor</span>
+                    <div class="kpi-card-body">
+                        <span class="kpi-big-num text-vest" id="kpiVest">0</span>
+                    </div>
                 </div>
             </div>
 
