@@ -86,14 +86,8 @@ def verify_construction_hardhat(crop):
 class StreamManager:
     def __init__(self):
         self.lock = threading.Lock()
-        self.source_type = 'file'
-        
-        uploaded_vids = [f for f in os.listdir(UPLOAD_FOLDER) if f.lower().endswith(('.mp4', '.avi', '.mov', '.mkv'))]
-        if uploaded_vids:
-            self.source_path = os.path.join(UPLOAD_FOLDER, uploaded_vids[0])
-        else:
-            self.source_path = os.path.join(UPLOAD_FOLDER, 'viii.mp4')
-            
+        self.source_type = None
+        self.source_path = None
         self.cap = None
         self.conf_thresh = 0.25
         self.last_violation_time = 0
@@ -104,17 +98,15 @@ class StreamManager:
             "hardhat_count": 0,
             "no_hardhat_count": 0,
             "vest_count": 0,
-            "status": "NORMAL",
+            "status": "GÖZLƏMƏDƏDİR",
             "fps": 0.0,
-            "source_name": os.path.basename(self.source_path)
+            "source_name": "Seçilməyib"
         }
         
         print("[*] Sənaye Modelləri yüklənir...")
         self.person_model = YOLO(PERSON_MODEL_PATH)
         self.ppe_model = YOLO(PPE_MODEL_PATH)
         print("[*] YOLO11s High-Res + Dual PPE Fusion hazırdır!")
-        
-        self.init_capture()
 
     def set_source(self, source, is_camera=False):
         with self.lock:
@@ -127,19 +119,42 @@ class StreamManager:
             self.init_capture()
 
     def init_capture(self):
+        if not self.source_path:
+            self.cap = None
+            return
         if self.source_type == 'camera':
-            src = int(self.source_path) if self.source_path.isdigit() else self.source_path
+            src = int(self.source_path) if str(self.source_path).isdigit() else self.source_path
             self.cap = cv2.VideoCapture(src)
         else:
             self.cap = cv2.VideoCapture(self.source_path)
 
     def get_frame(self):
         with self.lock:
-            if self.cap is None or not self.cap.isOpened():
-                self.init_capture()
-                if self.cap is None or not self.cap.isOpened():
+            if not self.source_path or self.cap is None or not self.cap.isOpened():
+                if self.source_path:
+                    self.init_capture()
+                
+                if not self.source_path or self.cap is None or not self.cap.isOpened():
                     time.sleep(0.1)
-                    return None
+                    # Standby placeholder canvas
+                    placeholder = np.zeros((720, 1280, 3), dtype=np.uint8)
+                    placeholder[:] = (248, 250, 252)
+                    
+                    cv2.rectangle(placeholder, (300, 180), (980, 520), (226, 232, 240), 2)
+                    cv2.rectangle(placeholder, (302, 182), (978, 518), (255, 255, 255), -1)
+                    
+                    cv2.putText(placeholder, "GORUNTU MENBEYI GOZLENILIR", (360, 320), cv2.FONT_HERSHEY_DUPLEX, 1.1, (15, 23, 42), 2, cv2.LINE_AA)
+                    cv2.putText(placeholder, "Zehmet olmasa sol panelden video yukleyin ve ya IP kamera qosun", (330, 380), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (100, 116, 139), 1, cv2.LINE_AA)
+                    cv2.putText(placeholder, "Fayl secildikden sonra AI analizi derhal baslayacaq", (400, 430), cv2.FONT_HERSHEY_SIMPLEX, 0.65, (148, 163, 184), 1, cv2.LINE_AA)
+                    
+                    self.stats["total_persons"] = 0
+                    self.stats["hardhat_count"] = 0
+                    self.stats["no_hardhat_count"] = 0
+                    self.stats["status"] = "GÖZLƏMƏDƏDİR"
+                    self.stats["fps"] = 0.0
+                    
+                    _, buffer = cv2.imencode('.jpg', placeholder, [cv2.IMWRITE_JPEG_QUALITY, 85])
+                    return buffer.tobytes()
 
             ret, frame = self.cap.read()
             if not ret:

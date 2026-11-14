@@ -46,33 +46,6 @@ function playAlertSound() {
     }
 }
 
-// Video Select
-function loadAvailableVideos() {
-    fetch('/available_videos')
-        .then(res => res.json())
-        .then(videos => {
-            const select = document.getElementById('videoSelect');
-            select.innerHTML = '';
-            videos.forEach(v => {
-                const opt = document.createElement('option');
-                opt.value = v;
-                opt.textContent = v;
-                select.appendChild(opt);
-            });
-        });
-}
-
-function changeSelectedVideo() {
-    const videoName = document.getElementById('videoSelect').value;
-    fetch('/set_source', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({type: 'file', video_name: videoName})
-    }).then(res => res.json()).then(data => {
-        document.getElementById('activeSourceDisplay').innerText = `Mənbə: ${videoName}`;
-        reloadStream();
-    });
-}
 
 // File Upload
 const dropArea = document.getElementById('dropArea');
@@ -128,11 +101,16 @@ function handleUpload(file) {
         if (xhr.status === 200) {
             progText.innerText = 'Uğurla yükləndi!';
             progFill.style.backgroundColor = '#10b981';
-            loadAvailableVideos();
+            try {
+                const res = JSON.parse(xhr.responseText);
+                if (res.filename) {
+                    document.getElementById('activeSourceDisplay').innerText = `Mənbə: ${res.filename}`;
+                }
+            } catch(e) {}
             setTimeout(() => {
                 progContainer.style.display = 'none';
                 reloadStream();
-            }, 1000);
+            }, 800);
         } else {
             progText.innerText = 'Xəta baş verdi!';
             progFill.style.backgroundColor = '#ef4444';
@@ -280,4 +258,4 @@ function closeModal() {
 }
 
 // Initial Call
-loadAvailableVideos();
+// Hazirda hec bir video avtomatik baslamir
