@@ -398,5 +398,6 @@ def set_conf():
     return jsonify({"status": "ok", "confidence": manager.conf_thresh})
 
 if __name__ == '__main__':
-    print("[*] Professional HSE Server ishe salir: http://localhost:5000")
-    app.run(host='0.0.0.0', port=5000, threaded=True, debug=False)
+    port = int(os.environ.get('PORT', 8050))
+    print(f"[*] Professional HSE Server ishe salir: http://0.0.0.0:{port}")
+    app.run(host='0.0.0.0', port=port, threaded=True, debug=False)
