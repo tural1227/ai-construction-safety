@@ -201,7 +201,8 @@ setInterval(() => {
             document.getElementById('kpiTotal').innerText = data.total_persons;
             document.getElementById('kpiSafe').innerText = data.hardhat_count;
             document.getElementById('kpiDanger').innerText = data.no_hardhat_count;
-            document.getElementById('kpiVest').innerText = data.vest_count;
+            const vestEl = document.getElementById('kpiVest');
+            if (vestEl) vestEl.innerText = data.vest_count;
             document.getElementById('fpsDisplay').innerText = `FPS: ${data.fps}`;
 
             const dangerCard = document.getElementById('kpiDangerCard');

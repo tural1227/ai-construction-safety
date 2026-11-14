@@ -272,11 +272,6 @@ class StreamManager:
                     cv2.circle(frame, (cx, cy), 13, COLOR_RED, -1)
                     cv2.putText(frame, "!", (cx - 4, cy + 5), font, 0.6, COLOR_WHITE, 2)
 
-            for vb, v_conf in vest_boxes:
-                vx1, vy1, vx2, vy2 = [int(v) for v in vb]
-                cv2.rectangle(frame, (vx1, vy1), (vx2, vy2), COLOR_YELLOW, 2)
-                v_label = f"Jilet: {v_conf:.2f}"
-                cv2.putText(frame, v_label, (vx1, vy1 - 4), cv2.FONT_HERSHEY_SIMPLEX, 0.45, COLOR_YELLOW, 1, cv2.LINE_AA)
 
             now = time.time()
             if no_hardhat_cnt > 0 and (now - self.last_violation_time > self.violation_cooldown):

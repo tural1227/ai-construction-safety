@@ -575,13 +575,13 @@ html, body {
     gap: 10px;
 }
 
-/* KPI Banner: 4 Cards in 1 Row (Zero Clutter & Non-overlapping) */
+/* KPI Banner: 3 Cards in 1 Row (Zero Clutter & Non-overlapping) */
 .kpi-banner {
     height: 74px;
     flex: 0 0 74px;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
     width: 100%;
 }
 
